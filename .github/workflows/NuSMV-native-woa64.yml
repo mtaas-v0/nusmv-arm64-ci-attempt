@@ -37,7 +37,8 @@ jobs:
         run: |
           :: Explicitly invoke within the MSVC target environment via native variables
           cd nusmv-src
-          meson setup builddir --backend ninja --buildtype release --prefix="%CD%\..\dist"
+          :: meson setup builddir --backend ninja --buildtype release --prefix="%CD%\..\dist"
+          meson setup builddir --backend ninja --buildtype release -Dline_editing=disabled --prefix="%CD%\..\dist"
 
       - name: Compile and Install with Ninja
         shell: cmd
