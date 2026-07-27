@@ -41,6 +41,7 @@ jobs:
 # 
       - name: Configure Meson Build System
         shell: cmd
+        if: false
         run: |
           :: Explicitly invoke within the MSVC target environment via native variables
           cd nusmv-src
@@ -49,10 +50,24 @@ jobs:
 
       - name: Compile and Install with Ninja
         shell: cmd
+        if: false
         run: |
           cd nusmv-src
           meson compile -C builddir
           meson install -C builddir
+
+      - name: cmake config build dir
+        run: |
+          cd nusmv-src
+          mkdir build
+          cd build
+          cmake ..
+
+      - name: cmake build 
+        run: |
+          cd nusmv-src
+          cd build
+          cmake --build . --config Release
 
       - name: Clean and Format for Alloy
         shell: powershell
