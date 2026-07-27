@@ -59,6 +59,7 @@ jobs:
       - name: cmake config build dir
         run: |
           cd nusmv-src
+          cd NuSMV
           mkdir build
           cd build
           cmake ..
@@ -66,6 +67,7 @@ jobs:
       - name: cmake build 
         run: |
           cd nusmv-src
+          cd NuSMV
           cd build
           cmake --build . --config Release
 
