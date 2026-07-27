@@ -35,8 +35,10 @@ jobs:
         run: |
           tar -xf nusmv.tar.xz
           Get-ChildItem -Path "." -Recurse | Select-Object -ExpandProperty FullName
-# Get-ChildItem -Path "NuSMV-*" | Rename-Item -NewName "nusmv-src"
+          Get-ChildItem -Path "NuSMV-*" -Directory | Rename-Item -NewName "nusmv-src"
 
+# Rename-Item -Path "NuSMV-2.6.0" -NewName "NewName"
+# 
       - name: Configure Meson Build System
         shell: cmd
         run: |
