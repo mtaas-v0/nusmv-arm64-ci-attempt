@@ -28,7 +28,7 @@ jobs:
       - name: Download NuSMV 2.7.1 Source
         shell: powershell
         run: |
-          Invoke-WebRequest -Uri "https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz" -OutFile "nusmv.tar.xz"
+          Invoke-WebRequest -Uri "https://nusmv.fbk.eu/distrib/2.6.0/NuSMV-2.6.0.tar.xz" -OutFile "nusmv.tar.xz"
           tar -xf nusmv.tar.xz
           Get-ChildItem -Path "NuSMV-*" | Rename-Item -NewName "nusmv-src"
 
