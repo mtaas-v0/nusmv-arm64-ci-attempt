@@ -33,7 +33,8 @@ jobs:
       - name: Download NuSMV Source
         run: |
           mkdir -p nusmv-src
-          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
+          wget -qO- https://nusmv.fbk.eu/distrib/NuSMV-2.6.0.tar.gz | tar -xJ --strip-components=1 -C nusmv-src
+#          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
 
       - name: Create LLVM Windows ARM64 Toolchain File
         run: |
