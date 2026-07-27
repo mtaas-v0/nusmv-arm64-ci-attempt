@@ -17,9 +17,9 @@ jobs:
       - name: Download NuSMV Source
         run: |
           mkdir -p nusmv-src
-          tar -xzf NuSMV-2.6.0.tar.gz
+          cat  NuSMV-2.6.0.tar.gz | tar -xzf - --strip-components=1 -C nusmv-src
           find .
-#  --strip-components=1 -C nusmv-src
+#  
 #          tar -xJ --strip-components=1 -C nusmv-src NuSMV-2.6.0.tar.gz
 #          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
 
@@ -65,7 +65,7 @@ jobs:
         run: |
           mkdir -p nusmv-src/build
           cd nusmv-src/build
-          cmake .. -G "Ninja" \
+          cmake ../NuSMV\ -G "Ninja" \
             -DCMAKE_TOOLCHAIN_FILE=../../win-arm64-toolchain.cmake \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=../../dist
