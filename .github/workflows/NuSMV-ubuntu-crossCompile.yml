@@ -13,6 +13,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        
+      - name: Download NuSMV Source
+        run: |
+          mkdir -p nusmv-src
+          tar -xJ --strip-components=1 -C nusmv-src NuSMV-2.6.0.tar.gz
+#          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
+
 
       - name: Install Cross-Compilation Dependencies
         run: |
@@ -29,12 +36,6 @@ jobs:
             wget \
             tar \
             xz-utils
-
-      - name: Download NuSMV Source
-        run: |
-          mkdir -p nusmv-src
-          wget -qO- https://nusmv.fbk.eu/distrib/NuSMV-2.6.0.tar.gz | tar -xJ --strip-components=1 -C nusmv-src
-#          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
 
       - name: Create LLVM Windows ARM64 Toolchain File
         run: |
