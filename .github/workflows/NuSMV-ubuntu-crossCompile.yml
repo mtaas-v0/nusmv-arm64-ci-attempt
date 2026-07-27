@@ -65,7 +65,7 @@ jobs:
         run: |
           mkdir -p nusmv-src/build
           cd nusmv-src/build
-          cmake ../NuSMV\ -G "Ninja" \
+          cmake ../NuSMV/ -G "Ninja" \
             -DCMAKE_TOOLCHAIN_FILE=../../win-arm64-toolchain.cmake \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=../../dist
