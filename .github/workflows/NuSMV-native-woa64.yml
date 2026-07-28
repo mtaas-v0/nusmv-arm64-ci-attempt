@@ -64,6 +64,7 @@ jobs:
           cd nusmv-src
           cd scripts
           2to3 -w create_help.py
+          2to3 -w html2text.py
 # Rename-Item -Path "NuSMV-2.6.0" -NewName "NewName"
 
       - name: Patch sgmllib Import for Python 3
