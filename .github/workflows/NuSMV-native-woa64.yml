@@ -53,7 +53,8 @@ jobs:
           cd nusmv-src
           cd NuSMV
           cd cmake
-          2to3 -w combine_grammer.py
+          Get-ChildItem -Path "." -Recurse | Select-Object -ExpandProperty FullName
+          2to3 -w combine_grammar.py
           
       - name: Perform In-Place Conversion
         run: |
