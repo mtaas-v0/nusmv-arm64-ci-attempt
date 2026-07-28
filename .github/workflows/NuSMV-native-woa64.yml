@@ -66,6 +66,21 @@ jobs:
           2to3 -w create_help.py
           2to3 -w html2text.py
 # Rename-Item -Path "NuSMV-2.6.0" -NewName "NewName"
+      - name: update html2text.py
+        run: |
+          $FilePath = "nusmv-src/scripts/html2text.py"
+          $OldLine = "from string import lower, replace, split, join"
+          
+          # Multi-line string holding our functional wrappers
+          $ShimBlock = @"
+          lower   = lambda s: str(s).lower()
+          split   = lambda s, sep=None, maxsplit=-1: str(s).split(sep, maxsplit)
+          replace = lambda s, old, new, count=-1: str(s).replace(old, new, count)
+          join    = lambda iterable, sep="": str(sep).join(iterable)
+          "@
+          
+          (Get-Content -Path $FilePath) -replace [regex]::Escape($OldLine), $ShimBlock | Set-Content -Path $FilePath
+          (Get-Content -Path $FilePath)
 
       - name: Patch sgmllib Import for Python 3
         shell: powershell
