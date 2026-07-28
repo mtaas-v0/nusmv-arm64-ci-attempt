@@ -8,7 +8,7 @@ on:
 jobs:
   build-ubuntu-x64:
     name: Direct compiling in ubuntu-24.04
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04 #24.04 has problem with python3, requiring 2to3 on the fly?
 
     steps:
       - name: Checkout Repository
