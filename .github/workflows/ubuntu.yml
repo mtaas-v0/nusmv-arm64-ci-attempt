@@ -65,6 +65,9 @@ jobs:
         run: |
           mkdir -p nusmv-src/build
           cd nusmv-src/build
+          export CFLAGS="-D_DEFAULT_SOURCE -D_XOPEN_SOURCE=500 -DNUSMV_HAVE_UNISTD_H"
+          export CXXFLAGS="-D_DEFAULT_SOURCE -D_XOPEN_SOURCE=500 -DNUSMV_HAVE_UNISTD_H"
+
           cmake ../NuSMV/ -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=../../dist
