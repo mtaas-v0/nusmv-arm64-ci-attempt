@@ -17,11 +17,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 'pypy2.7' #required, cause 2.6 src still using py2
-
+          #python-version: 'pypy2.7' #required, cause 2.6 src still using py2
+          python-version: 'latest'
+          
       - name: Human check py version
         run: |
           python --version
+
+      - name: Install 2to3 Utility
+        run: pip install 2to3
 
       - name: Install Build Tools via Choco & Pip
         run: |
@@ -41,6 +45,23 @@ jobs:
           Get-ChildItem -Path "." -Recurse | Select-Object -ExpandProperty FullName
           Get-ChildItem -Path "NuSMV-*" -Directory | Rename-Item -NewName "nusmv-src"
 
+
+      - name: Perform In-Place Conversion
+        run: |
+          # -w overwrites the file in-place and creates a .bak backup file
+          # -n disables backup generation if you don't want the script0.py.bak file
+          cd nusmv-src
+          cd NuSMV
+          cd cmake
+          2to3 -w combine_grammer.py
+          
+      - name: Perform In-Place Conversion
+        run: |
+          # -w overwrites the file in-place and creates a .bak backup file
+          # -n disables backup generation if you don't want the script0.py.bak file
+          cd nusmv-src
+          cd scripts
+          2to3 -w create_help.py
 # Rename-Item -Path "NuSMV-2.6.0" -NewName "NewName"
 # 
       - name: Configure Meson Build System
