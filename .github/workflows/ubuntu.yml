@@ -36,6 +36,7 @@ jobs:
             clang \
             lld \
             wget \
+            libreadline-dev \
             tar \
             xz-utils
 
