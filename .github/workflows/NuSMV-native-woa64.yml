@@ -1,8 +1,8 @@
 name: Build NuSMV 2.6 (Native MSVC ARM64)
 
 on:
-#  push:
-#    branches: [ main ]
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -23,6 +23,7 @@ jobs:
       - name: Human check py version
         run: |
           python --version
+          pip install sgmllib3k
 
       - name: Install 2to3 Utility
         run: pip install 2to3
@@ -64,7 +65,14 @@ jobs:
           cd scripts
           2to3 -w create_help.py
 # Rename-Item -Path "NuSMV-2.6.0" -NewName "NewName"
-# 
+
+      - name: Patch sgmllib Import for Python 3
+        shell: powershell
+        run: |
+          $FilePath = "nusmv-src/scripts/html2text.py"
+          (Get-Content -Path $FilePath) -replace 'import sgmllib', 'import sgmllib3k as sgmllib' | Set-Content -Path $FilePath
+
+ 
       - name: Configure Meson Build System
         shell: cmd
         if: false
