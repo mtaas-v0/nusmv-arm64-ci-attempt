@@ -1,0 +1,97 @@
+name: Build NuSMV (Ubuntu)
+
+on:
+#  push:
+#    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-win-arm64:
+    name: Cross-Compile for Windows ARM64
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Download/Expand NuSMV Source
+        run: |
+          mkdir -p nusmv-src
+          cat  NuSMV-2.6.0.tar.gz | tar -xzf - --strip-components=1 -C nusmv-src
+          find .
+#  
+#          tar -xJ --strip-components=1 -C nusmv-src NuSMV-2.6.0.tar.gz
+#          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
+      # This action pulls down MSVC/SDK libs and handles case-insensitivity
+      - name: Fetch Windows SDK and MSVC Libs
+        if: false
+        uses: JakeStanger/setup-msvc-artifacts@v1
+        with:
+          arch: arm64
+
+      - name: Install Cross-Compilation Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            bison \
+            flex \
+            llvm \
+            clang \
+            lld \
+            wget \
+            tar \
+            xz-utils
+
+      - name: Create LLVM Windows ARM64 Toolchain File
+        run: |
+          cat << 'EOF' > win-arm64-toolchain.cmake
+          set(CMAKE_SYSTEM_NAME Windows)
+          set(CMAKE_SYSTEM_PROCESSOR ARM64)
+
+          # Force LLVM/Clang for cross-compiling to PE/COFF Windows target
+          set(CMAKE_C_COMPILER clang)
+          set(CMAKE_C_COMPILER_TARGET aarch64-pc-windows-msvc)
+          set(CMAKE_CXX_COMPILER clang++)
+          set(CMAKE_CXX_COMPILER_TARGET aarch64-pc-windows-msvc)
+
+          # Use lld-link as the linker for MSVC-compatible output
+          set(CMAKE_LINKER lld-link)
+          
+          # Target environments
+          set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+          set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+          set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+          EOF
+
+      - name: Configure CMake
+        run: |
+          mkdir -p nusmv-src/build
+          cd nusmv-src/build
+          cmake ../NuSMV/ -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=../../dist
+
+      - name: Build and Install NuSMV
+        run: |
+          cd nusmv-src/build
+          ninja
+          ninja install
+
+      - name: Clean up Package Structure
+        run: |
+          # Strip unnecessary development headers to reduce file size
+          rm -rf dist/include dist/lib dist/share
+          # Rename the executable for easy Alloy 6 detection
+          if [ -f "dist/bin/NuSMV.exe" ]; then
+            mv dist/bin/NuSMV.exe dist/bin/nusmv.exe
+          fi
+
+      - name: Upload Compiled Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: NuSMV-2.6.0-ubuntu-24.04
+          path: dist/
+          retention-days: 7
