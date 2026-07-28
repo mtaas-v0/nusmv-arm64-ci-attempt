@@ -68,6 +68,7 @@ jobs:
 
       - name: Patch sgmllib Import for Python 3
         shell: powershell
+        if: false 
         run: |
           $FilePath = "nusmv-src/scripts/html2text.py"
           (Get-Content -Path $FilePath) -replace 'import sgmllib', 'import sgmllib3k as sgmllib' | Set-Content -Path $FilePath
