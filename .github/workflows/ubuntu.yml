@@ -23,12 +23,6 @@ jobs:
 #          tar -xJ --strip-components=1 -C nusmv-src NuSMV-2.6.0.tar.gz
 #          wget -qO- https://nusmv.fbk.eu/distrib/2.7.1/NuSMV-2.7.1.tar.xz | tar -xJ --strip-components=1 -C nusmv-src
       # This action pulls down MSVC/SDK libs and handles case-insensitivity
-      - name: Fetch Windows SDK and MSVC Libs
-        if: false
-        uses: JakeStanger/setup-msvc-artifacts@v1
-        with:
-          arch: arm64
-
       - name: Install Cross-Compilation Dependencies
         run: |
           sudo apt-get update
