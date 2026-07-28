@@ -66,8 +66,8 @@ jobs:
           mkdir -p nusmv-src/build
           cd nusmv-src/build
           export CFLAGS="-D_DEFAULT_SOURCE -D_XOPEN_SOURCE=500 -DNUSMV_HAVE_UNISTD_H"
-          export CXXFLAGS="-D_DEFAULT_SOURCE -D_XOPEN_SOURCE=500 -DNUSMV_HAVE_UNISTD_H"
-
+          export CXXFLAGS="-D_DEFAULT_SOURCE -D_XOPEN_SOURCE=500 -DNUSMV_HAVE_UNISTD_H -std=c++98"
+          sed -i 's/union wait status;/int status;/g' ../cudd-2.4.1.1/util/pipefork.c
           cmake ../NuSMV/ -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=../../dist
