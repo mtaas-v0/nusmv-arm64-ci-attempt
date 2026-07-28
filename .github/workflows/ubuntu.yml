@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-ubuntu-x64:
-    name: Direct compiling in ubuntu-24.04
+    name: Direct compiling in ubuntu-22.04
     runs-on: ubuntu-22.04 #24.04 has problem with python3, requiring 2to3 on the fly?
 
     steps:
@@ -46,6 +46,45 @@ jobs:
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 2
           python --version
+
+      # Step 1: Initialize the tracking system
+      - name: Initialize Python Logger
+        run: |
+          # Create a global log file location
+          LOG_FILE="/tmp/python_execution_log.txt"
+          touch "$LOG_FILE"
+          chmod 666 "$LOG_FILE"
+          
+          # Find the real path of the current python executable
+          REAL_PYTHON=$(which python || which python2)
+          echo "Real Python path: $REAL_PYTHON"
+
+          # Create our custom wrapper script directory
+          WRAPPER_DIR="/tmp/python-wrapper-bin"
+          mkdir -p "$WRAPPER_DIR"
+
+          # Write the wrapper script
+          cat << 'EOF' > "$WRAPPER_DIR/python"
+          #!/bin/bash
+          LOG_FILE="/tmp/python_execution_log.txt"
+          REAL_PYTHON="REAL_PYTHON_PLACEHOLDER"
+          
+          # Append the exact arguments to our global log file
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] $REAL_PYTHON $*" >> "$LOG_FILE"
+          
+          # Execute the actual python binary with all arguments
+          exec "$REAL_PYTHON" "$@"
+          EOF
+
+          # Inject the true Python path into the wrapper script
+          sed -i "s|REAL_PYTHON_PLACEHOLDER|$REAL_PYTHON|g" "$WRAPPER_DIR/python"
+          chmod +x "$WRAPPER_DIR/python"
+
+          # Also create a 'python3' alias pointing to the same wrapper
+          ln -s "$WRAPPER_DIR/python" "$WRAPPER_DIR/python3"
+
+          # Prepend our wrapper directory to the GitHub PATH for subsequent steps
+          echo "$WRAPPER_DIR" >> $GITHUB_PATH
 
       - name: Create LLVM Windows ARM64 Toolchain File
         run: |
@@ -100,3 +139,17 @@ jobs:
           name: NuSMV-2.6.0-ubuntu-24.04
           path: dist/
           retention-days: 7
+
+            # Step 3: Print out the intercepted executions
+      - name: Print All Executed Python Commands
+        if: always() # Ensures logs print even if prior python steps failed
+        run: |
+          echo "========================================="
+          echo "       CAPTURED PYTHON EXECUTIONS        "
+          echo "========================================="
+          if [ -f /tmp/python_execution_log.txt ]; then
+            cat /tmp/python_execution_log.txt
+          else
+            echo "No python executions were logged."
+          fi
+          echo "========================================="
