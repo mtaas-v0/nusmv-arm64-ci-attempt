@@ -1,4 +1,4 @@
-name: Build NuSMV (Native MSVC ARM64)
+name: Build NuSMV 2.6 (Native MSVC ARM64)
 
 on:
 #  push:
@@ -17,7 +17,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: 'pypy2.7' #required, cause 2.6 src still using py2
+
+      - name: Human check py version
+        run: |
+          python --version
 
       - name: Install Build Tools via Choco & Pip
         run: |
